@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>moltdisk · 蜕冗 — 找出能重建的，剩下的交给你</title>
+<meta name="description" content="moltdisk 清点你可以从源码重建的构建产物：node_modules、target、dist、venv。量大小，排序，给出判断依据。它不删除任何东西。">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0C0B09" id="meta-theme">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32">
+<meta property="og:title" content="moltdisk · 蜕冗">
+<meta property="og:description" content="只审计，不删除。找出能重建的构建产物，把判断依据摊开给你看。">
+<meta property="og:image" content="assets/banner.png">
+<meta property="og:type" content="website">
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('molt.theme');
+    if(!t){ t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; }
+    document.documentElement.setAttribute('data-theme', t);
+    var l = localStorage.getItem('molt.lang');
+    if(l){
+      document.documentElement.setAttribute('lang', l);
+      if(l === 'ar'){ document.documentElement.setAttribute('dir','rtl'); }
+    }
+  }catch(e){}
+})();
+</script>
+<style>
+/* ── tokens ───────────────────────────────────────────────── */
+:root{
+  --paper:#0C0B09;
+  --ink:#EFE8DA;
+  --soft:#928873;
+  --brass:#D9A23C;
+  --rule:rgba(239,232,218,.15);
+  --rule-strong:rgba(239,232,218,.30);
+  --grid:rgba(239,232,218,.045);
+  --code-bg:#131109;
+  --code-ink:#EFE8DA;
+  --code-soft:#8A816D;
+  --wash:rgba(239,232,218,.035);
+  --serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC","Source Han Serif CN",STSong,SimSun,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono","Noto Sans Mono CJK SC",monospace;
+  --step:clamp(64px,9vw,132px);
+}
+html[data-theme="light"]{
+  --paper:#EFE8DA;
+  --ink:#16130D;
+  --soft:#6E6455;
+  --brass:#9C6A12;
+  --rule:rgba(22,19,13,.17);
+  --rule-strong:rgba(22,19,13,.34);
+  --grid:rgba(22,19,13,.055);
+  --code-bg:#14110B;
+  --code-ink:#EFE8DA;
+  --code-soft:#948A76;
+  --wash:rgba(22,19,13,.04);
+}
+html:lang(ja){ --sans:-apple-system,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Noto Sans JP",system-ui,sans-serif; --serif:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Songti SC",serif; }
+html:lang(ko){ --sans:-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif; --serif:"Apple Myungjo","Nanum Myeongjo","Noto Serif KR","Songti SC",serif; }
+html:lang(ar){ --sans:-apple-system,"Geeza Pro","Segoe UI","Noto Naskh Arabic","Noto Sans Arabic",Tahoma,sans-serif; --serif:"Noto Naskh Arabic","Traditional Arabic","Geeza Pro",serif; }
+
+/* ── base ─────────────────────────────────────────────────── */
+*,*::before,*::after{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-size:17px; line-height:1.78;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  transition:background-color .28s ease,color .28s ease;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:68px 68px;
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 46%,transparent 100%);
+  mask-image:linear-gradient(180deg,#000 0%,#000 46%,transparent 100%);
+}
+main,header,footer{ position:relative; z-index:1; }
+img{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+a:focus-visible,button:focus-visible{ outline:2px solid var(--brass); outline-offset:3px; border-radius:1px; }
+::selection{ background:var(--brass); color:#0C0B09; }
+.skip{ position:absolute; inset-inline-start:-9999px; top:8px; background:var(--ink); color:var(--paper); padding:8px 14px; z-index:99; }
+.skip:focus{ inset-inline-start:8px; }
+
+.wrap{ width:100%; max-width:1200px; margin:0 auto; padding-inline:clamp(20px,4vw,44px); }
+.mono{ font-family:var(--mono); font-variant-ligatures:none; }
+.muted{ color:var(--soft); }
+
+/* ── masthead ─────────────────────────────────────────────── */
+.mast{ border-bottom:1px solid var(--rule); }
+.mast-in{ display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:74px; }
+.brand{ display:inline-flex; align-items:baseline; gap:10px; }
+.brand .mark{ width:30px; height:30px; align-self:center; }
+.brand .mark-l{ display:none; }
+html[data-theme="light"] .brand .mark-d{ display:none; }
+html[data-theme="light"] .brand .mark-l{ display:block; }
+.brand-name{ font-family:var(--serif); font-size:21px; font-weight:600; letter-spacing:-.01em; }
+.brand-cn{ font-size:13px; color:var(--soft); letter-spacing:.14em; }
+.tools{ display:flex; align-items:center; gap:6px; }
+.tbtn{
+  appearance:none; background:transparent; border:1px solid transparent; color:var(--ink);
+  font:inherit; font-size:14px; padding:7px 11px; display:inline-flex; align-items:center; gap:8px;
+  cursor:pointer; border-radius:2px;
+}
+.tbtn:hover{ border-color:var(--rule-strong); }
+.tbtn svg{ width:15px; height:15px; }
+.tbtn .chev{ width:8px; height:8px; border-inline-end:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg) translateY(-2px); opacity:.6; }
+html[data-theme="dark"] .icon-sun{ display:none; }
+html[data-theme="light"] .icon-moon{ display:none; }
+
+.lang-panel{
+  position:absolute; inset-inline-end:clamp(20px,4vw,44px); top:70px; z-index:20;
+  width:min(420px,calc(100vw - 40px)); max-height:60vh; overflow:auto;
+  background:var(--paper); border:1px solid var(--rule-strong);
+  box-shadow:0 18px 48px rgba(0,0,0,.28); padding:8px;
+}
+.lang-panel[hidden]{ display:none; }
+.lang-panel ul{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; }
+.lang-panel li{ margin:0; }
+.lang-panel button{
+  width:100%; text-align:start; background:transparent; border:0; color:var(--ink);
+  font:inherit; font-size:14px; padding:9px 12px; display:flex; align-items:center; gap:8px; cursor:pointer;
+}
+.lang-panel button:hover{ background:var(--wash); }
+.lang-panel button[aria-current="true"]{ color:var(--brass); }
+.lang-panel button[aria-current="true"]::before{ content:""; width:5px; height:5px; background:var(--brass); border-radius:50%; flex:none; }
+.lang-panel button:not([aria-current="true"])::before{ content:""; width:5px; height:5px; flex:none; }
+
+/* ── hero ─────────────────────────────────────────────────── */
+.hero{ padding-block:clamp(52px,8vw,104px) clamp(48px,7vw,88px); }
+.hero-in{ display:grid; grid-template-columns:minmax(0,1.02fr) minmax(0,1fr); gap:clamp(30px,5vw,68px); align-items:start; }
+@media (max-width:940px){ .hero-in{ grid-template-columns:1fr; gap:36px; } }
+h1{
+  font-family:var(--serif); font-weight:600; font-size:clamp(38px,6.4vw,78px);
+  line-height:1.1; letter-spacing:-.012em; margin:0 0 clamp(18px,2.4vw,28px); text-wrap:balance;
+}
+h1 .line{ display:block; overflow:hidden; padding-block:.06em; margin-block:-.06em; }
+html[dir="rtl"] h1{ letter-spacing:0; }
+.lede{ margin:0 0 28px; max-width:56ch; font-size:clamp(16px,1.5vw,18.5px); line-height:1.72; color:var(--ink); }
+.lede em{ font-style:normal; color:var(--brass); }
+.cta-row{ display:flex; flex-wrap:wrap; gap:12px 22px; align-items:center; }
+.btn{
+  display:inline-flex; align-items:center; gap:10px; font-size:15px; padding:11px 20px;
+  border:1px solid var(--ink); border-radius:2px; color:var(--ink); background:transparent;
+  transition:background-color .18s ease,color .18s ease,border-color .18s ease;
+}
+.btn:hover{ background:var(--ink); color:var(--paper); }
+.btn.solid{ background:var(--ink); color:var(--paper); }
+.btn.solid:hover{ background:var(--brass); border-color:var(--brass); color:#0C0B09; }
+.link-u{ font-size:15px; padding-block:2px; border-bottom:1px solid var(--rule-strong); }
+.link-u:hover{ border-color:var(--brass); color:var(--brass); }
+
+/* terminal */
+.term{
+  background:var(--code-bg); color:var(--code-ink); border:1px solid rgba(239,232,218,.16);
+  font-family:var(--mono); font-size:13.5px; line-height:1.85; padding:22px 22px 26px;
+  direction:ltr; text-align:start; overflow-x:auto; position:relative;
+}
+html[data-theme="light"] .term{ box-shadow:0 2px 0 rgba(22,19,13,.10); }
+.term-head{
+  display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+  font-size:11px; letter-spacing:.1em; color:var(--code-soft);
+  border-bottom:1px solid rgba(239,232,218,.12); padding-bottom:10px; margin-bottom:14px;
+}
+.term pre{ margin:0; font:inherit; white-space:pre-wrap; word-break:break-word; }
+.term .prompt{ color:var(--brass); }
+.term .out{ color:#CFC6B4; }
+.term .head{ color:#F3EDE0; }
+.term .dim{ color:var(--code-soft); }
+.term .bar{ display:inline-block; width:7px; height:1em; background:var(--brass); vertical-align:-2px; animation:blink 1.15s steps(1) infinite; }
+@keyframes blink{ 0%,49%{ opacity:1 } 50%,100%{ opacity:0 } }
+.term-note{ font-size:12.5px; color:var(--soft); margin:10px 0 0; max-width:52ch; }
+
+/* ── sections ─────────────────────────────────────────────── */
+.sec{ border-top:1px solid var(--rule); padding-block:clamp(52px,7vw,96px); }
+.sec-in{ display:grid; grid-template-columns:104px minmax(0,1fr); gap:clamp(18px,3.4vw,52px); }
+@media (max-width:880px){ .sec-in{ grid-template-columns:1fr; gap:14px; } }
+.gauge{ position:relative; padding-inline-start:14px; font-family:var(--mono); font-size:11.5px; line-height:1.5; color:var(--soft); height:fit-content; }
+.gauge::before{
+  content:""; position:absolute; inset-block:-4px; inset-inline-start:0; width:1px; background:var(--rule);
+}
+.gauge::after{
+  content:""; position:absolute; inset-block:-4px; inset-inline-start:-5px; width:11px;
+  background:repeating-linear-gradient(180deg,var(--rule-strong) 0 1px,transparent 1px 9px);
+}
+.gauge b{ display:block; font-weight:500; font-size:15px; color:var(--ink); letter-spacing:.02em; }
+.gauge span{ display:block; margin-top:5px; }
+@media (max-width:880px){
+  .gauge{ display:flex; align-items:baseline; gap:10px; padding:0; font-size:12px; }
+  .gauge::before,.gauge::after{ display:none; }
+  .gauge b{ font-size:12px; }
+  .gauge span{ margin:0; }
+}
+.body-col{ max-width:66ch; }
+h2{
+  font-family:var(--serif); font-weight:600; font-size:clamp(25px,3.3vw,36px);
+  line-height:1.28; letter-spacing:-.005em; margin:0 0 clamp(14px,2vw,20px); text-wrap:balance;
+}
+.body-col p{ margin:0 0 1.05em; }
+.body-col p:last-child{ margin-bottom:0; }
+.why-grid{ display:grid; grid-template-columns:minmax(0,1fr) 216px; gap:clamp(20px,3.4vw,44px); align-items:start; }
+@media (max-width:960px){ .why-grid{ grid-template-columns:1fr; } .note-col{ display:none; } }
+.note-col{ border-inline-start:1px solid var(--rule); padding-inline-start:16px; font-family:var(--mono); font-size:12px; line-height:1.9; color:var(--soft); }
+.note-col b{ display:block; color:var(--ink); font-weight:500; margin-bottom:6px; font-size:11.5px; letter-spacing:.06em; }
+.note-col code{ color:var(--brass); }
+
+/* code blocks */
+.code{
+  background:var(--code-bg); color:var(--code-ink); direction:ltr; text-align:start;
+  border:1px solid rgba(239,232,218,.16); font-family:var(--mono); font-size:13px; line-height:1.85;
+  padding:14px 16px; overflow-x:auto; position:relative;
+}
+.code pre{ margin:0; font:inherit; white-space:pre; }
+.code .c{ color:var(--code-soft); }
+.copy{
+  position:absolute; inset-block-start:6px; inset-inline-end:6px;
+  background:rgba(239,232,218,.08); color:var(--code-ink); border:1px solid rgba(239,232,218,.18);
+  font-family:var(--sans); font-size:11.5px; padding:3px 9px; cursor:pointer; border-radius:2px; opacity:0;
+  transition:opacity .15s ease;
+}
+.code:hover .copy,.copy:focus-visible{ opacity:1; }
+.copy[data-done="1"]{ color:var(--brass); border-color:var(--brass); opacity:1; }
+@media (hover:none){ .copy{ opacity:1; } }
+
+/* verdict demo */
+.demo{ margin-top:clamp(22px,3vw,34px); }
+.demo-tabs{ display:flex; flex-wrap:wrap; gap:0; border-bottom:1px solid var(--rule); }
+.demo-tabs button{
+  background:transparent; border:0; border-bottom:2px solid transparent; color:var(--soft);
+  font-family:var(--mono); font-size:12.5px; padding:9px 13px; cursor:pointer; margin-bottom:-1px;
+  transition:color .15s ease,border-color .15s ease;
+}
+.demo-tabs button:hover{ color:var(--ink); }
+.demo-tabs button[aria-selected="true"]{ color:var(--ink); border-bottom-color:var(--brass); }
+.demo-pane{
+  border:1px solid var(--rule); border-top:0; padding:20px 20px 22px; background:var(--wash);
+  position:relative;
+  clip-path:polygon(0 0,100% 0,100% calc(100% - 7px),96% 100%,88% calc(100% - 5px),79% 100%,71% calc(100% - 8px),62% 100%,53% calc(100% - 4px),44% 100%,36% calc(100% - 7px),27% 100%,18% calc(100% - 3px),9% 100%,3% calc(100% - 6px),0 100%);
+}
+.demo-path{ font-family:var(--mono); font-size:13px; color:var(--ink); margin:0 0 16px; direction:ltr; text-align:start; }
+.demo-path .k{ color:var(--soft); }
+.ev{ display:grid; grid-template-columns:132px minmax(0,1fr); gap:2px 16px; font-size:14px; }
+@media (max-width:620px){ .ev{ grid-template-columns:1fr; gap:0; } .ev dt{ margin-top:10px; } }
+.ev dt{ color:var(--soft); font-size:12.5px; padding-block:5px; }
+.ev dd{ margin:0; padding-block:5px; font-family:var(--mono); font-size:13px; direction:ltr; text-align:start; }
+html[dir="rtl"] .ev dd{ text-align:start; }
+.ev dd.ok{ color:var(--brass); }
+.demo-verdict{ margin-top:16px; padding-top:14px; border-top:1px solid var(--rule); display:flex; flex-wrap:wrap; align-items:baseline; gap:10px; font-family:var(--mono); font-size:14px; }
+.demo-verdict strong{ color:var(--brass); font-weight:500; }
+.demo-verdict em{ font-style:normal; font-family:var(--sans); font-size:13px; color:var(--soft); }
+.demo-hint{ margin:14px 0 0; font-size:13px; color:var(--soft); }
+.demo-hint code{ font-family:var(--mono); color:var(--ink); }
+
+/* rulebook rows */
+.kinds{ border-top:1px solid var(--rule-strong); margin-top:clamp(20px,3vw,30px); }
+.kinds-head,.kind{
+  display:grid; grid-template-columns:104px minmax(0,1.65fr) minmax(0,1.35fr) 96px;
+  gap:14px; align-items:baseline;
+}
+.kinds-head{ padding-block:9px; border-bottom:1px solid var(--rule-strong); font-size:12px; color:var(--soft); }
+.kind{ padding-block:13px; border-bottom:1px solid var(--rule); position:relative; }
+.kind::after{
+  content:""; position:absolute; inset-inline-start:-14px; inset-block:10px; width:2px; background:var(--brass);
+  transform:scaleY(0); transform-origin:top; transition:transform .18s ease;
+}
+.kind:hover::after{ transform:scaleY(1); }
+.kind dt{ font-family:var(--mono); font-size:13.5px; }
+.kind .names,.kind .marker{ font-family:var(--mono); font-size:12px; color:var(--ink); line-height:1.7; overflow-wrap:anywhere; }
+.kind .marker{ color:var(--soft); }
+.kind .on{ font-size:12.5px; color:var(--soft); }
+.kind .on[data-off="1"]{ color:var(--brass); }
+@media (max-width:820px){
+  .kinds-head{ display:none; }
+  .kind{ grid-template-columns:1fr; gap:2px; padding-block:15px; }
+  .kind>div{ display:grid; grid-template-columns:78px minmax(0,1fr); gap:10px; }
+  .kind>div::before{ content:attr(data-label); font-size:11px; color:var(--soft); font-family:var(--sans); }
+}
+.kinds-note{ margin-top:16px; font-size:13.5px; color:var(--soft); max-width:64ch; }
+
+/* limits */
+.limits{ list-style:none; margin:0; padding:0; border-top:1px solid var(--rule); }
+.limits li{ padding-block:16px; border-bottom:1px solid var(--rule); display:grid; grid-template-columns:28px minmax(0,1fr); gap:14px; }
+.limits .n{ font-family:var(--mono); font-size:12px; color:var(--brass); padding-top:4px; }
+.limits p{ margin:0; font-size:15.5px; }
+
+/* install */
+.inst-grid{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(20px,3vw,40px); margin-top:clamp(20px,3vw,30px); }
+@media (max-width:860px){ .inst-grid{ grid-template-columns:1fr; } }
+.inst-col h3{ font-size:13px; font-weight:500; color:var(--soft); margin:0 0 10px; }
+.plats{ list-style:none; margin:0 0 18px; padding:0; border-top:1px solid var(--rule); }
+.plats li{ display:flex; justify-content:space-between; gap:12px; padding-block:10px; border-bottom:1px solid var(--rule); font-size:14px; }
+.plats .tag{ font-family:var(--mono); font-size:11.5px; color:var(--soft); direction:ltr; }
+
+/* footer */
+.foot{ border-top:1px solid var(--rule-strong); padding-block:30px 44px; margin-top:clamp(40px,6vw,70px); }
+.foot-in{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px 30px; align-items:baseline; }
+.foot p{ margin:0; font-size:13px; color:var(--soft); }
+.foot-links{ display:flex; gap:20px; font-size:13px; }
+.foot-links a{ border-bottom:1px solid transparent; }
+.foot-links a:hover{ border-color:var(--brass); color:var(--brass); }
+
+/* ── stacking & overflow guards ───────────────────────────── */
+header{ z-index:50; }
+.hero-in>*,.sec-in>*,.why-grid>*,.inst-grid>*,.inst-col,.hero-term,.hero-copy,.demo,.kinds,.limits,.body-col{ min-width:0; }
+.code,.term,.plats,.kind{ max-width:100%; }
+.code pre{ max-width:100%; }
+.code{ scrollbar-width:thin; }
+#langLabel{ max-width:32vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.mast-in{ min-width:0; }
+.tools{ min-width:0; flex:none; }
+@media (max-width:640px){
+  .term{ font-size:12.5px; padding:18px 16px 20px; }
+  .code{ font-size:12px; padding:12px 13px; }
+  .plats li{ flex-wrap:wrap; gap:2px 12px; }
+  .kinds-head,.kind{ grid-template-columns:1fr; }
+  .brand-name{ font-size:19px; }
+  .brand-cn{ display:none; }
+  .tbtn{ padding:7px 8px; font-size:13px; }
+  .tbtn,.btn,.lang-panel button,.demo-tabs button{ min-height:44px; }
+  .cta-row{ gap:10px 16px; }
+  .lede{ font-size:16px; }
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+  .term .bar{ animation:none; opacity:1; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="ui.skip">跳到正文</a>
+
+<header class="mast">
+  <div class="wrap mast-in">
+    <a class="brand" href="#top" aria-label="moltdisk">
+      <img class="mark mark-d" src="assets/mark.svg" alt="" width="30" height="30">
+      <img class="mark mark-l" src="assets/mark-light.svg" alt="" width="30" height="30">
+      <span class="brand-name">moltdisk</span>
+      <span class="brand-cn">蜕冗</span>
+    </a>
+    <div class="tools">
+      <button class="tbtn" id="langBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="langPanel">
+        <span id="langLabel">中文</span>
+        <span class="chev" aria-hidden="true"></span>
+      </button>
+      <button class="tbtn" id="themeBtn" type="button">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2Z"/></svg>
+        <span id="themeLabel">浅色</span>
+      </button>
+    </div>
+  </div>
+  <div class="lang-panel" id="langPanel" hidden>
+    <ul id="langList"></ul>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" id="top">
+    <div class="wrap hero-in">
+      <div class="hero-copy">
+        <h1>
+          <span class="line"><span data-i18n="hero.t1">找出能重建的，</span></span>
+          <span class="line"><span data-i18n="hero.t2">剩下的交给你</span></span>
+        </h1>
+        <p class="lede" data-i18n="hero.lede">moltdisk 走一遍你的项目，量出能从源码重建的产物——node_modules、target、dist、venv——排好序，并逐条告诉你凭什么这么判。然后它停下。这一版里没有删除代码。</p>
+        <div class="cta-row">
+          <a class="btn solid" href="#install" data-i18n="hero.cta1">装上</a>
+          <a class="btn" href="https://github.com/yangyang2857-rgb/moltdisk" target="_blank" rel="noopener" data-i18n="hero.cta2">读源码</a>
+          <a class="link-u" href="#verdict" data-i18n="hero.cta3">看一条裁决是怎么得出的</a>
+        </div>
+      </div>
+      <div class="hero-term">
+        <div class="term">
+          <div class="term-head"><span>moltdisk 0.1.0</span><span class="mono">~/code</span></div>
+<pre><span class="prompt">$</span> moltdisk ~/code
+<span class="head">1.84 GB of build output can be rebuilt from source.</span>
+
+<span class="out">7 targets  ·  1.84 GB  ·  63.9k files
+by kind: node 1.21 GB  ·  rust 512 MB  ·  python 96 MB</span>
+
+<span class="dim">`moltdisk why &lt;path&gt;` shows the evidence for any entry.
+This build never deletes — that call is yours.</span> <span class="bar" aria-hidden="true"></span></pre>
+        </div>
+        <p class="term-note" data-i18n="hero.caption">真实输出。终端里那句结论不是营销，是程序最后一个动作：报告交给谁，由谁决定删不删。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="why">
+    <div class="wrap sec-in">
+      <div class="gauge" aria-hidden="true"><b>01</b><span data-i18n="gauge.why">不删的理由</span></div>
+      <div class="body-col why-grid">
+        <div>
+          <h2 data-i18n="why.title">早先的版本能删，所以我们把删除拿掉了</h2>
+          <p data-i18n="why.p1">早期内部构建确实会删。它带着护栏：目录名与同级标记必须同时命中——<span class="mono">target/</span> 旁边得有 <span class="mono">Cargo.toml</span>，<span class="mono">vendor/</span> 旁边得有 <span class="mono">composer.json</span>，<span class="mono">Pods/</span> 旁边得有 <span class="mono">Podfile</span>；符号链接、家目录、给定根之外的路径一律拒绝。</p>
+          <p data-i18n="why.p2">护栏是好的，但不够。一个凭启发式去删别人构建目录的工具，总有一天会删错；而按下回车的人，不会是写启发式的人。所以在公开之前，删除整段被移除了。</p>
+          <p data-i18n="why.p3">留下的是本来最有意思的部分：判断，以及把判断摊开给人看。要删，请你自己删，用 moltdisk 递给你的清单。你懂你的项目，moltdisk 只懂它的规则册。</p>
+        </div>
+        <aside class="note-col">
+          <b data-i18n="why.noteTitle">自证</b>
+          <div class="mono">no <code>delete</code> module<br>no <code>remove_dir_all</code><br><code>-y</code> → hard error<br>symlinks refused</div>
+          <div class="code" style="margin-top:12px;font-size:11.5px;padding:10px 12px">
+<pre><span class="c">$</span> moltdisk -y
+moltdisk: this build
+never deletes — `-y`
+was removed in 0.1.0</pre>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="verdict">
+    <div class="wrap sec-in">
+      <div class="gauge" aria-hidden="true"><b>02</b><span data-i18n="gauge.verdict">裁决</span></div>
+      <div class="body-col" style="max-width:none">
+        <h2 data-i18n="verdict.title">一条裁决要两样东西：名字，和标记</h2>
+        <div style="max-width:66ch">
+          <p data-i18n="verdict.lede">名字不是证据。<span class="mono">target/</span> 是个普通英文词，一个叫 target 但塞满源码的文件夹并不是构建产物。所以每条规则都要求：名字命中，并且同级存在只有真项目才会有的标记。点开任意一条，看它两半是怎么被逐项查过的。</p>
+        </div>
+
+        <div class="demo">
+          <div class="demo-tabs" role="tablist" aria-label="verdict examples" id="demoTabs"></div>
+          <div class="demo-pane" role="tabpanel" id="demoPane" tabindex="0"></div>
+          <p class="demo-hint" data-i18n="verdict.hint"><code>moltdisk why &lt;path&gt;</code> 会把这两半原样打印出来，包括没找到时它到底在找什么。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="rulebook">
+    <div class="wrap sec-in">
+      <div class="gauge" aria-hidden="true"><b>03</b><span data-i18n="gauge.rulebook">规则册</span></div>
+      <div class="body-col" style="max-width:none">
+        <h2 data-i18n="rulebook.title">规则册就印在 <span class="mono">moltdisk kinds</span> 里</h2>
+        <p style="max-width:64ch" data-i18n="rulebook.lede">每条规则后面都跟着一行“怎么重建”——那才是它可被丢弃的真正论据，所以它属于输出的一部分，不是文档里的补丁。</p>
+
+        <div class="kinds" role="table">
+          <div class="kinds-head" role="row">
+            <div role="columnheader" data-i18n="rulebook.th.kind">类别</div>
+            <div role="columnheader" data-i18n="rulebook.th.names">匹配的名字</div>
+            <div role="columnheader" data-i18n="rulebook.th.marker">必须有的标记</div>
+            <div role="columnheader" data-i18n="rulebook.th.on">默认</div>
+          </div>
+
+          <div class="kind" role="row">
+            <div role="cell"><dt>node</dt></div>
+            <div class="names" data-label="names">node_modules, .next, .nuxt, .turbo, .parcel-cache, bower_components</div>
+            <div class="marker" data-label="marker" data-i18n="rulebook.none">无需标记（名字本身无歧义）</div>
+            <div class="on" data-label="on" data-i18n="rulebook.on">纳入</div>
+          </div>
+          <div class="kind" role="row">
+            <div role="cell"><dt>rust</dt></div>
+            <div class="names" data-label="names">target</div>
+            <div class="marker" data-label="marker">Cargo.toml</div>
+            <div class="on" data-label="on" data-i18n="rulebook.on">纳入</div>
+          </div>
+          <div class="kind" role="row">
+            <div role="cell"><dt>jvm</dt></div>
+            <div class="names" data-label="names">target, build, .gradle, out</div>
+            <div class="marker" data-label="marker">pom.xml, build.gradle, settings.gradle, gradlew</div>
+            <div class="on" data-label="on" data-i18n="rulebook.on">纳入</div>
+          </div>
+          <div class="kind" role="row">
+            <div role="cell"><dt>python</dt></div>
+            <div class="names" data-label="names">.venv, venv, __pycache__, .pytest_cache, .mypy_cache, .ruff_cache</div>
+            <div class="marker" data-label="marker">pyproject.toml, setup.py, requirements.txt</div>
+            <div class="on" data-label="on" data-i18n="rulebook.on">纳入</div>
+          </div>
+          <div class="kind" role="row">
+            <div role="cell"><dt>dotnet</dt></div>
+            <div class="names" data-label="names">obj, bin</div>
+            <div class="marker" data-label="marker">*.csproj, *.sln, *.fsproj</div>
+            <div class="on" data-label="on" data-i18n="rulebook.on">纳入</div>
+          </div>
+          <div class="kind" role="row">
+            <div role="cell"><dt>php</dt></div>
+            <div class="names" data-label="names">vendor</div>
+            <div class="marker" data-label="marker">composer.json</div>
+            <div class="on" data-label="on" data-i18n="rulebook.on">纳入</div>
+          </div>
+          <div class="kind" role="row">
+            <div role="cell"><dt>swift</dt></div>
+            <div class="names" data-label="names">.build</div>
+            <div class="marker" data-label="marker">Package.swift</div>
+            <div class="on" data-label="on" data-i18n="rulebook.on">纳入</div>
+          </div>
+          <div class="kind" role="row">
+            <div role="cell"><dt>apple</dt></div>
+            <div class="names" data-label="names">Pods, DerivedData</div>
+            <div class="marker" data-label="marker">Podfile, *.xcodeproj, *.xcworkspace</div>
+            <div class="on" data-label="on" data-i18n="rulebook.on">纳入</div>
+          </div>
+          <div class="kind" role="row">
+            <div role="cell"><dt>cache</dt></div>
+            <div class="names" data-label="names">.cache, .sass-cache, .eslintcache, .stylelintcache</div>
+            <div class="marker" data-label="marker" data-i18n="rulebook.none">无需标记（名字本身无歧义）</div>
+            <div class="on" data-off="1" data-label="on" data-i18n="rulebook.off">需手动开启</div>
+          </div>
+          <div class="kind" role="row">
+            <div role="cell"><dt>junk</dt></div>
+            <div class="names" data-label="names">.DS_Store, Thumbs.db, *.swp</div>
+            <div class="marker" data-label="marker" data-i18n="rulebook.none">无需标记（名字本身无歧义）</div>
+            <div class="on" data-off="1" data-label="on" data-i18n="rulebook.off">需手动开启</div>
+          </div>
+        </div>
+        <p class="kinds-note" data-i18n="rulebook.note"><span class="mono">dist/</span>、<span class="mono">build/</span>、<span class="mono">bin/</span>、<span class="mono">venv/</span> 故意不在默认集合里：太多项目模板拿这些名字放源码。报告里的误报很便宜，删除里的误报不便宜——而报告是会被复制进删除命令的。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="limits">
+    <div class="wrap sec-in">
+      <div class="gauge" aria-hidden="true"><b>04</b><span data-i18n="gauge.limits">边界</span></div>
+      <div class="body-col" style="max-width:none">
+        <h2 data-i18n="limits.title">它知道自己不明白什么</h2>
+        <ul class="limits" style="max-width:70ch">
+          <li><span class="n">a</span><p data-i18n="limits.i1">符号链接既不跟随也不计入——扫描不会顺着一个链接走出给定根。</p></li>
+          <li><span class="n">b</span><p data-i18n="limits.i2">默认深度 8。嵌在 <span class="mono">node_modules</span> 里的 <span class="mono">node_modules</span> 会跳过，数字不会算两遍。</p></li>
+          <li><span class="n">c</span><p data-i18n="limits.i3">大小是文件的表观字节数，不是磁盘块占用。<span class="mono">du</span> 可能不同意，因为它量的是另一件事。</p></li>
+          <li><span class="n">d</span><p data-i18n="limits.i4">monorepo 根上只有一个 lockfile，也仍然给每个 workspace 单独一条裁决，因为每个 <span class="mono">node_modules</span> 都是分开量的。</p></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="install">
+    <div class="wrap sec-in">
+      <div class="gauge" aria-hidden="true"><b>05</b><span data-i18n="gauge.install">装上</span></div>
+      <div class="body-col" style="max-width:none">
+        <h2 data-i18n="install.title">装一份，然后跑在你自己身上</h2>
+        <p style="max-width:64ch" data-i18n="install.lede">每个 Release 都附预编译二进制，每个压缩包配一份 <span class="mono">.sha256</span>。也可以从源码装：MSRV 1.80，只有一个依赖，没有 unsafe。</p>
+
+        <div class="inst-grid">
+          <div class="inst-col">
+            <h3 data-i18n="install.bin">预编译二进制</h3>
+            <ul class="plats">
+              <li><span>Linux x86_64</span><span class="tag">musl static</span></li>
+              <li><span>Linux aarch64</span><span class="tag">musl static</span></li>
+              <li><span>macOS</span><span class="tag">Intel / Apple silicon</span></li>
+              <li><span>Windows</span><span class="tag">x86_64</span></li>
+            </ul>
+            <div class="code">
+              <button class="copy" type="button" data-copy="curl -LO https://github.com/yangyang2857-rgb/moltdisk/releases/download/v0.1.0/moltdisk-v0.1.0-x86_64-unknown-linux-musl.tar.gz" data-i18n="ui.copy">复制</button>
+<pre>curl -LO https://github.com/yangyang2857-rgb/moltdisk/releases/download/v0.1.0/moltdisk-v0.1.0-x86_64-unknown-linux-musl.tar.gz</pre>
+            </div>
+            <a class="link-u" style="display:inline-block;margin-top:14px" href="https://github.com/yangyang2857-rgb/moltdisk/releases" target="_blank" rel="noopener" data-i18n="install.releases">全部版本与校验文件</a>
+          </div>
+          <div class="inst-col">
+            <h3 data-i18n="install.fromSource">从源码</h3>
+            <div class="code">
+              <button class="copy" type="button" data-copy="cargo install --git https://github.com/yangyang2857-rgb/moltdisk" data-i18n="ui.copy">复制</button>
+<pre>cargo install --git https://github.com/yangyang2857-rgb/moltdisk</pre>
+            </div>
+            <div class="code" style="margin-top:14px">
+              <button class="copy" type="button" data-copy="moltdisk ~/code" data-i18n="ui.copy">复制</button>
+<pre><span class="c"># 然后</span>
+moltdisk ~/code
+moltdisk why ~/code/web-shop/target
+moltdisk kinds</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <p data-i18n="footer.line">MIT 许可。moltdisk 只审计，不删除。</p>
+    <div class="foot-links">
+      <a href="https://github.com/yangyang2857-rgb/moltdisk" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/yangyang2857-rgb/moltdisk/blob/main/README.md" target="_blank" rel="noopener">README</a>
+      <a href="https://github.com/yangyang2857-rgb/moltdisk/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/i18n.js"></script>
+<script>
+(function(){
+  var I18N = window.MOLT_I18N || {};
+  var root = document.documentElement;
+  var LANGS = Object.keys(I18N);
+  var langNames = {};
+  LANGS.forEach(function(c){ langNames[c] = (I18N[c].meta || {}).native || c; });
+
+  function t(lang){ return I18N[lang] || I18N['en']; }
+
+  function dig(obj, path){
+    return path.split('.').reduce(function(o, k){
+      return (o && typeof o === 'object') ? o[k] : undefined;
+    }, obj);
+  }
+
+  function apply(lang){
+    var d = t(lang);
+    root.setAttribute('lang', lang);
+    root.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    document.title = d.meta.title;
+    var md = document.querySelector('meta[name="description"]');
+    if(md) md.setAttribute('content', d.meta.desc);
+
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var v = dig(d, el.getAttribute('data-i18n'));
+      if(typeof v === 'string') el.innerHTML = v;
+    });
+    // rulebook mobile labels
+    document.querySelectorAll('.kind [data-label]').forEach(function(el){
+      var map = {names:d.rulebook.th.names, marker:d.rulebook.th.marker, on:d.rulebook.th.on};
+      el.setAttribute('data-label', map[el.getAttribute('data-label')] || '');
+    });
+    document.getElementById('langLabel').textContent = langNames[lang];
+    document.getElementById('themeLabel').textContent = (root.getAttribute('data-theme') === 'dark') ? d.ui.toLight : d.ui.toDark;
+    document.getElementById('themeBtn').setAttribute('aria-label', (root.getAttribute('data-theme') === 'dark') ? d.ui.toLight : d.ui.toDark);
+    document.getElementById('langBtn').setAttribute('aria-label', d.ui.langLabel);
+    document.querySelectorAll('.copy').forEach(function(b){ if(b.dataset.done !== '1') b.textContent = d.ui.copy; });
+
+    buildLangList(lang, d);
+    buildDemo(lang, d);
+    try{ localStorage.setItem('molt.lang', lang); }catch(e){}
+  }
+
+  function buildLangList(current, d){
+    var ul = document.getElementById('langList');
+    ul.innerHTML = '';
+    LANGS.forEach(function(c){
+      var li = document.createElement('li');
+      var b = document.createElement('button');
+      b.type = 'button'; b.textContent = langNames[c];
+      b.setAttribute('lang', c);
+      if(c === current){ b.setAttribute('aria-current','true'); }
+      b.addEventListener('click', function(){ apply(c); closePanel(); document.getElementById('langBtn').focus(); });
+      li.appendChild(b); ul.appendChild(li);
+    });
+  }
+
+  function buildDemo(lang, d){
+    var tabs = document.getElementById('demoTabs');
+    var pane = document.getElementById('demoPane');
+    tabs.innerHTML = '';
+    d.cases.forEach(function(c, i){
+      var b = document.createElement('button');
+      b.type = 'button'; b.setAttribute('role','tab');
+      b.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+      b.textContent = c.tab; b.dataset.idx = String(i);
+      b.addEventListener('click', function(){
+        tabs.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-selected','false'); });
+        b.setAttribute('aria-selected','true');
+        renderCase(c, d, pane);
+      });
+      tabs.appendChild(b);
+    });
+    if(d.cases[0]) renderCase(d.cases[0], d, pane);
+  }
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function renderCase(c, d, pane){
+    pane.innerHTML =
+      '<p class="demo-path"><span class="k">' + esc(d.verdict.pathLabel) + '</span> ' + esc(c.path) + '</p>' +
+      '<dl class="ev">' +
+        '<dt>' + esc(d.verdict.nameLabel) + '</dt><dd>' + esc(c.name) + '</dd>' +
+        '<dt>' + esc(d.verdict.markerLabel) + '</dt><dd>' + c.marker.map(function(m){ return esc(m); }).join('<br>') + '</dd>' +
+        '<dt>' + esc(d.verdict.kindLabel) + '</dt><dd>' + esc(c.kind) + '</dd>' +
+      '</dl>' +
+      '<div class="demo-verdict"><span>' + esc(d.verdict.verdictLabel) + '</span><strong>' + esc(c.verdict) + '</strong><em>' + esc(c.note) + '</em></div>';
+  }
+
+  // theme
+  function setTheme(v){
+    root.setAttribute('data-theme', v);
+    var meta = document.getElementById('meta-theme');
+    if(meta) meta.setAttribute('content', v === 'light' ? '#EFE8DA' : '#0C0B09');
+    try{ localStorage.setItem('molt.theme', v); }catch(e){}
+    var lang = root.getAttribute('lang') || 'zh-Hans';
+    var d = t(lang);
+    document.getElementById('themeLabel').textContent = (v === 'dark') ? d.ui.toLight : d.ui.toDark;
+    document.getElementById('themeBtn').setAttribute('aria-label', (v === 'dark') ? d.ui.toLight : d.ui.toDark);
+  }
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  // lang panel
+  var panel = document.getElementById('langPanel');
+  var langBtn = document.getElementById('langBtn');
+  function openPanel(){ panel.hidden = false; langBtn.setAttribute('aria-expanded','true'); }
+  function closePanel(){ panel.hidden = true; langBtn.setAttribute('aria-expanded','false'); }
+  langBtn.addEventListener('click', function(e){ e.stopPropagation(); panel.hidden ? openPanel() : closePanel(); });
+  document.addEventListener('click', function(e){ if(!panel.hidden && !panel.contains(e.target) && e.target !== langBtn) closePanel(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !panel.hidden){ closePanel(); langBtn.focus(); } });
+
+  // copy
+  document.addEventListener('click', function(e){
+    var b = e.target.closest('.copy'); if(!b) return;
+    var text = b.getAttribute('data-copy');
+    var done = function(){ b.textContent = t(root.getAttribute('lang')).ui.copied; b.dataset.done='1'; setTimeout(function(){ b.dataset.done='0'; b.textContent = t(root.getAttribute('lang')).ui.copy; }, 1600); };
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done, done); }
+    else { var ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(err){} ta.remove(); done(); }
+  });
+
+  var saved = null;
+  try{ saved = localStorage.getItem('molt.lang'); }catch(e){}
+  var browser = (navigator.language || 'en');
+  var guess = saved;
+  if(!guess){
+    var lc = browser.toLowerCase();
+    if(lc.indexOf('zh') === 0){ guess = (lc.indexOf('hant') > -1 || lc.indexOf('tw') > -1 || lc.indexOf('hk') > -1 || lc.indexOf('mo') > -1) ? 'zh-Hant' : 'zh-Hans'; }
+    else { guess = LANGS.filter(function(c){ return lc.indexOf(c.toLowerCase().split('-')[0]) === 0; })[0]; }
+    if(!guess) guess = 'en';
+  }
+  if(LANGS.indexOf(guess) < 0) guess = 'en';
+  apply(guess);
+  setTheme(root.getAttribute('data-theme') || 'dark');
+})();
+</script>
+</body>
+</html>
