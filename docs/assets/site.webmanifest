@@ -1,0 +1,44 @@
+{
+  "name": "moltdisk · 蜕冗",
+  "short_name": "moltdisk",
+  "description": "清点可从源码重建的构建产物：量大小、排序、给出判断依据。只审计，不删除。",
+  "lang": "zh-Hans",
+  "dir": "ltr",
+  "start_url": "/moltdisk/",
+  "scope": "/moltdisk/",
+  "display": "standalone",
+  "background_color": "#0C0B09",
+  "theme_color": "#0C0B09",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
