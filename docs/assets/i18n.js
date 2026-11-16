@@ -18,7 +18,10 @@ window.MOLT_I18N = {
    "verdict": "裁决",
    "rulebook": "规则册",
    "limits": "边界",
-   "install": "装上"
+   "install": "装上",
+   "compare": "对照",
+   "json": "机器可读",
+   "faq": "常问"
   },
   "hero": {
    "t1": "找出能重建的，",
@@ -112,6 +115,44 @@ window.MOLT_I18N = {
   },
   "footer": {
    "line": "MIT 许可。moltdisk 只审计，不删除。"
+  },
+  "cmp": {
+   "title": "别人按名字下手，这里按证据开口",
+   "lede": "三种做法的差别不在快慢，在你事后要承担什么。",
+   "th1": "做法",
+   "th2": "它凭什么下判断",
+   "th3": "你事后要承担",
+   "r1b": "你记得的那个路径",
+   "r1c": "漏掉的留在原地，记错的带走源码",
+   "r2n": "按目录名扫描",
+   "r2b": "只有名字",
+   "r2c": "一个叫 target 的源码目录也被算进去",
+   "r3b": "名字 + 同级标记 + 表观字节",
+   "r3c": "一份带依据的清单，删不删由你"
+  },
+  "json": {
+   "title": "接进 jq，或者接进 CI",
+   "lede": "<code>--json</code> 把同一个结论写成字段：无色、无进度，进管道就能用。",
+   "note": "字段就是这些，没有嵌套的对象树。大小是字节，时间是 Unix 秒。",
+   "ci": "<code>--jobs</code> 控制测量线程数；<code>--no-color</code> 在重定向时已经自动生效。",
+   "cmt1": "# 只要超过 1 GB 的，按大小取路径",
+   "cmt2": "# CI：超过阈值就让流水线失败"
+  },
+  "faq": {
+   "title": "你可能想问的六件事",
+   "lede": "答案在代码里，不在措辞里。",
+   "q1": "它会删我的东西吗？",
+   "a1": "不会。0.1.0 里没有 delete 模块，也没有 remove_dir_all；<code>-y</code> 是硬错误，退出码 2。",
+   "q2": "为什么 dist/、build/、bin/、venv/ 不在默认集合里？",
+   "a2": "太多模板把它们当源码目录。要纳入就写 <code>-k all</code>，判断也随之归你。",
+   "q3": "为什么不跟随符号链接？",
+   "a3": "避免顺着链接走出你给的根目录，也避免同一份数据被数两遍。",
+   "q4": "为什么和 du 报的数字不一样？",
+   "a4": "moltdisk 报文件的表观字节数；<code>du</code> 报的是磁盘块占用。",
+   "q5": "嵌套的 node_modules 会被重复计吗？",
+   "a5": "不会。外层被跳过，每个字节只算一次。",
+   "q6": "有 watch、配置文件、日志吗？",
+   "a6": "还没有。0.1.0 只有一次性审计；这三项在计划中，尚未发布。"
   }
  },
  "zh-Hant": {
@@ -133,7 +174,10 @@ window.MOLT_I18N = {
    "verdict": "裁決",
    "rulebook": "規則冊",
    "limits": "邊界",
-   "install": "安裝"
+   "install": "安裝",
+   "compare": "對照",
+   "json": "機器可讀",
+   "faq": "常問"
   },
   "hero": {
    "t1": "找出能重建的，",
@@ -227,6 +271,44 @@ window.MOLT_I18N = {
   },
   "footer": {
    "line": "MIT 授權。moltdisk 只審計，不刪除。"
+  },
+  "cmp": {
+   "title": "別人按名字下手，這裡按證據開口",
+   "lede": "三種做法的差別不在快慢，在你事後要承擔什麼。",
+   "th1": "做法",
+   "th2": "它憑什麼下判斷",
+   "th3": "你事後要承擔",
+   "r1b": "你記得的那個路徑",
+   "r1c": "漏掉的留在原地，記錯的帶走原始碼",
+   "r2n": "按目錄名掃描",
+   "r2b": "只有名字",
+   "r2c": "一個叫 target 的原始碼目錄也被算進去",
+   "r3b": "名字 + 同層標記 + 表觀位元組",
+   "r3c": "一份有依據的清單，刪不刪由你"
+  },
+  "json": {
+   "title": "接進 jq，或者接進 CI",
+   "lede": "<code>--json</code> 把同一個結論寫成欄位：無色、無進度，進管道就能用。",
+   "note": "欄位就是這些，沒有嵌套的物件樹。大小是位元組，時間是 Unix 秒。",
+   "ci": "<code>--jobs</code> 控制測量執行緒數；<code>--no-color</code> 在重定向時已經自動生效。",
+   "cmt1": "# 只要超過 1 GB 的，按大小取路徑",
+   "cmt2": "# CI：超過閾值就讓流水線失敗"
+  },
+  "faq": {
+   "title": "你可能想問的六件事",
+   "lede": "答案在程式碼裡，不在措辭裡。",
+   "q1": "它會刪我的東西嗎？",
+   "a1": "不會。0.1.0 沒有 delete 模組，也沒有 remove_dir_all；<code>-y</code> 是硬錯誤，退出碼 2。",
+   "q2": "為什麼 dist/、build/、bin/、venv/ 不在預設集合裡？",
+   "a2": "太多樣板把它們當原始碼目錄。要納入就寫 <code>-k all</code>，判斷也隨之歸你。",
+   "q3": "為什麼不跟隨符號連結？",
+   "a3": "避免順著連結走出你給的根目錄，也避免同一份資料被數兩遍。",
+   "q4": "為什麼和 du 報的數字不一樣？",
+   "a4": "moltdisk 報檔案的表觀位元組數；<code>du</code> 報的是磁碟區塊佔用。",
+   "q5": "嵌套的 node_modules 會被重複計嗎？",
+   "a5": "不會。外層跳過，每個位元組只算一次。",
+   "q6": "有 watch、設定檔、日誌嗎？",
+   "a6": "還沒有。0.1.0 只有一次性稽核；這三項在計畫中，未發布。"
   }
  },
  "en": {
@@ -248,7 +330,10 @@ window.MOLT_I18N = {
    "verdict": "The verdict",
    "rulebook": "The rulebook",
    "limits": "Boundaries",
-   "install": "Install"
+   "install": "Install",
+   "compare": "Compare",
+   "json": "Machine",
+   "faq": "FAQ"
   },
   "hero": {
    "t1": "Find what rebuilds,",
@@ -342,6 +427,44 @@ window.MOLT_I18N = {
   },
   "footer": {
    "line": "MIT licensed. moltdisk audits; it does not delete."
+  },
+  "cmp": {
+   "title": "Others act on a name. This acts on evidence.",
+   "lede": "The difference is not speed. It is what you are left holding afterwards.",
+   "th1": "Approach",
+   "th2": "What it judges by",
+   "th3": "What it costs you",
+   "r1b": "The path you happen to remember",
+   "r1c": "Forgotten piles stay put; misremembered ones take source with them",
+   "r2n": "A name-matching sweeper",
+   "r2b": "The name alone",
+   "r2c": "A source folder called target counts too",
+   "r3b": "Name, sibling marker, apparent bytes",
+   "r3c": "A list with its reasons; the decision stays yours"
+  },
+  "json": {
+   "title": "Pipe it into jq, or into CI",
+   "lede": "<code>--json</code> writes the same verdict as fields: no colour, no progress, safe through a pipe.",
+   "note": "That is the whole schema. Sizes are bytes, times are Unix seconds.",
+   "ci": "<code>--jobs</code> sets the measuring threads; <code>--no-color</code> already kicks in when stdout is redirected.",
+   "cmt1": "# only targets over 1 GB, by size",
+   "cmt2": "# CI: fail the pipeline above a threshold"
+  },
+  "faq": {
+   "title": "Six things you are probably about to ask",
+   "lede": "The answers live in the code, not in the wording.",
+   "q1": "Does it delete anything of mine?",
+   "a1": "No. 0.1.0 has no delete module and no remove_dir_all. <code>-y</code> is a hard error, exit code 2.",
+   "q2": "Why are dist/, build/, bin/ and venv/ not in the default set?",
+   "a2": "Too many templates use those names for source. Opt in with <code>-k all</code>, and the judgement becomes yours.",
+   "q3": "Why not follow symlinks?",
+   "a3": "So a link cannot walk out of the root you gave, and the same bytes are never counted twice.",
+   "q4": "Why does this differ from du?",
+   "a4": "moltdisk measures the apparent bytes in files; <code>du</code> measures blocks on disk.",
+   "q5": "Are nested node_modules counted twice?",
+   "a5": "No. The outer one is skipped, so every byte is counted once.",
+   "q6": "Is there watch, a config file, logging?",
+   "a6": "Not yet. 0.1.0 does a single audit; all three are planned, none are released."
   }
  },
  "ja": {
@@ -363,7 +486,10 @@ window.MOLT_I18N = {
    "verdict": "判定",
    "rulebook": "ルールブック",
    "limits": "境界",
-   "install": "インストール"
+   "install": "インストール",
+   "compare": "比較",
+   "json": "機械可読",
+   "faq": "よくある質問"
   },
   "hero": {
    "t1": "再生成できるものを",
@@ -457,6 +583,44 @@ window.MOLT_I18N = {
   },
   "footer": {
    "line": "MIT ライセンス。moltdisk は監査のみ、削除はしません。"
+  },
+  "cmp": {
+   "title": "名前で動く道具と、根拠で語る道具",
+   "lede": "違いは速さではなく、あとで何を抱えるかにある。",
+   "th1": "やり方",
+   "th2": "何で判断するか",
+   "th3": "あとで負うもの",
+   "r1b": "覚えているパス",
+   "r1c": "忘れた分は残り、間違えた分はソースごと消える",
+   "r2n": "名前で拾うスキャナ",
+   "r2b": "名前だけ",
+   "r2c": "target という名のソースフォルダも数えられる",
+   "r3b": "名前＋同階層のマーカー＋見かけのバイト数",
+   "r3c": "根拠つきの一覧。消すかどうかはあなたが決める"
+  },
+  "json": {
+   "title": "jq に流すか、CI に流すか",
+   "lede": "<code>--json</code> は同じ結論をフィールドで出す。色も進捗もなく、パイプでそのまま使える。",
+   "note": "スキーマはこれだけ。サイズはバイト、時刻は Unix 秒。",
+   "ci": "<code>--jobs</code> は計測スレッド数。<code>--no-color</code> はリダイレクト時に自動で効く。",
+   "cmt1": "# 1 GB を超えるものだけ、サイズ順に",
+   "cmt2": "# CI：閾値を超えたらパイプラインを落とす"
+  },
+  "faq": {
+   "title": "たぶん聞きたい六つのこと",
+   "lede": "答えはコードにあり、文言にはない。",
+   "q1": "何か消されますか？",
+   "a1": "いいえ。0.1.0 に delete モジュールも remove_dir_all もありません。<code>-y</code> はハードエラーで終了コード 2。",
+   "q2": "なぜ dist/、build/、bin/、venv/ が既定に入らない？",
+   "a2": "多くのテンプレートがソース用に使う名前だからです。<code>-k all</code> で入れるなら、判断もあなたのものになります。",
+   "q3": "なぜシンボリックリンクを辿らない？",
+   "a3": "リンクで指定したルートの外へ出ないため、同じデータを二重に数えないためです。",
+   "q4": "なぜ du と数字が違う？",
+   "a4": "moltdisk はファイルの見かけのバイト数、<code>du</code> はディスク上のブロック数を見ます。",
+   "q5": "入れ子の node_modules は二重計上されますか？",
+   "a5": "いいえ。外側を飛ばすので、各バイトは一度だけ数えます。",
+   "q6": "watch、設定ファイル、ログはありますか？",
+   "a6": "まだありません。0.1.0 は一度きりの監査のみ。三つとも計画中で未公開です。"
   }
  },
  "ko": {
@@ -478,7 +642,10 @@ window.MOLT_I18N = {
    "verdict": "판정",
    "rulebook": "규칙집",
    "limits": "경계",
-   "install": "설치"
+   "install": "설치",
+   "compare": "비교",
+   "json": "기계 판독",
+   "faq": "자주 묻는 질문"
   },
   "hero": {
    "t1": "다시 만들 수 있는 것을 찾고,",
@@ -572,6 +739,44 @@ window.MOLT_I18N = {
   },
   "footer": {
    "line": "MIT 라이선스. moltdisk는 감사만 하고 삭제하지 않습니다."
+  },
+  "cmp": {
+   "title": "이름으로 움직이는 도구와 근거로 말하는 도구",
+   "lede": "차이는 속도가 아니라 나중에 무엇을 떠안는가에 있다.",
+   "th1": "방식",
+   "th2": "무엇으로 판단하나",
+   "th3": "나중에 감당할 것",
+   "r1b": "기억하고 있는 경로",
+   "r1c": "잊은 것은 남고, 잘못 기억한 것은 소스까지 데려간다",
+   "r2n": "이름으로 훑는 스캐너",
+   "r2b": "이름 하나뿐",
+   "r2c": "target이라는 이름의 소스 폴더도 함께 포함된다",
+   "r3b": "이름 + 같은 위치의 표식 + 겉보기 바이트",
+   "r3c": "근거가 붙은 목록. 지울지는 당신이 정한다"
+  },
+  "json": {
+   "title": "jq로 보내거나 CI로 보내기",
+   "lede": "<code>--json</code>은 같은 결론을 필드로 씁니다. 색도 진행 표시도 없어 파이프에서 그대로 씁니다.",
+   "note": "스키마는 이게 전부입니다. 크기는 바이트, 시각은 유닉스 초.",
+   "ci": "<code>--jobs</code>는 측정 스레드 수이고, <code>--no-color</code>는 출력을 리다이렉트하면 자동으로 적용됩니다.",
+   "cmt1": "# 1 GB 넘는 것만, 크기 순으로",
+   "cmt2": "# CI: 임계값을 넘으면 파이프라인 실패"
+  },
+  "faq": {
+   "title": "아마 묻고 싶을 여섯 가지",
+   "lede": "답은 코드에 있고 문구에는 없습니다.",
+   "q1": "제 파일을 지우나요?",
+   "a1": "아닙니다. 0.1.0에는 delete 모듈도 remove_dir_all도 없습니다. <code>-y</code>는 강제 오류, 종료 코드 2.",
+   "q2": "dist/, build/, bin/, venv/가 기본 집합에 없는 이유는?",
+   "a2": "템플릿이 그 이름을 소스로 너무 많이 씁니다. <code>-k all</code>로 넣으면 판단도 당신 몫이 됩니다.",
+   "q3": "심볼릭 링크를 따라가지 않는 이유는?",
+   "a3": "링크로 지정한 루트 밖으로 나가지 않고, 같은 바이트를 두 번 세지 않기 위해서입니다.",
+   "q4": "du와 숫자가 다른 이유는?",
+   "a4": "moltdisk는 파일의 겉보기 바이트를, <code>du</code>는 디스크 블록을 셉니다.",
+   "q5": "중첩된 node_modules가 중복 계산되나요?",
+   "a5": "아닙니다. 바깥 것을 건너뛰어 바이트마다 한 번만 셉니다.",
+   "q6": "watch, 설정 파일, 로그가 있나요?",
+   "a6": "아직 없습니다. 0.1.0은 한 번짜리 감사뿐이고 셋 다 계획 중입니다."
   }
  },
  "es": {
@@ -593,7 +798,10 @@ window.MOLT_I18N = {
    "verdict": "El veredicto",
    "rulebook": "El libro de reglas",
    "limits": "Límites",
-   "install": "Instalación"
+   "install": "Instalación",
+   "compare": "Comparativa",
+   "json": "Legible",
+   "faq": "Preguntas"
   },
   "hero": {
    "t1": "Encuentra lo que se reconstruye,",
@@ -687,6 +895,44 @@ window.MOLT_I18N = {
   },
   "footer": {
    "line": "Licencia MIT. moltdisk audita; no borra."
+  },
+  "cmp": {
+   "title": "Otras herramientas actúan por el nombre. Esta actúa por la evidencia.",
+   "lede": "La diferencia no es la velocidad, sino con qué te quedas después.",
+   "th1": "Enfoque",
+   "th2": "Con qué decide",
+   "th3": "Lo que te cuesta después",
+   "r1b": "La ruta que recuerdas",
+   "r1c": "Lo olvidado se queda; lo mal recordado se lleva el código",
+   "r2n": "Un rastreador que casa nombres",
+   "r2b": "Solo el nombre",
+   "r2c": "Una carpeta de código llamada target también cuenta",
+   "r3b": "Nombre, marcador vecino, bytes aparentes",
+   "r3c": "Una lista con sus razones; la decisión sigue siendo tuya"
+  },
+  "json": {
+   "title": "Llévalo a jq o a CI",
+   "lede": "<code>--json</code> escribe el mismo veredicto como campos: sin color, sin progreso, listo para una tubería.",
+   "note": "Ese es todo el esquema. Los tamaños van en bytes y las fechas en segundos Unix.",
+   "ci": "<code>--jobs</code> fija los hilos de medición; <code>--no-color</code> ya se activa al redirigir la salida.",
+   "cmt1": "# solo lo que pasa de 1 GB, por tamaño",
+   "cmt2": "# CI: falla el pipeline si pasa el umbral"
+  },
+  "faq": {
+   "title": "Seis cosas que probablemente vas a preguntar",
+   "lede": "Las respuestas están en el código, no en las palabras.",
+   "q1": "¿Va a borrar algo mío?",
+   "a1": "No. La 0.1.0 no tiene módulo delete ni remove_dir_all. <code>-y</code> es un error duro, código de salida 2.",
+   "q2": "¿Por qué dist/, build/, bin/ y venv/ no están por defecto?",
+   "a2": "Porque demasiadas plantillas usan esos nombres para código. Actívalos con <code>-k all</code> y el juicio pasa a ser tuyo.",
+   "q3": "¿Por qué no sigue enlaces simbólicos?",
+   "a3": "Para que un enlace no salga de la raíz que diste y para no contar los mismos bytes dos veces.",
+   "q4": "¿Por qué no coincide con du?",
+   "a4": "moltdisk mide los bytes aparentes de los archivos; <code>du</code> mide los bloques del disco.",
+   "q5": "¿Se cuentan dos veces los node_modules anidados?",
+   "a5": "No. Se omite el exterior, así que cada byte se cuenta una vez.",
+   "q6": "¿Hay watch, archivo de configuración o registro?",
+   "a6": "Todavía no. La 0.1.0 hace una sola auditoría; las tres están planeadas y sin publicar."
   }
  },
  "fr": {
@@ -708,7 +954,10 @@ window.MOLT_I18N = {
    "verdict": "Le verdict",
    "rulebook": "Le livre de règles",
    "limits": "Limites",
-   "install": "Installation"
+   "install": "Installation",
+   "compare": "Comparaison",
+   "json": "Lisible",
+   "faq": "Questions"
   },
   "hero": {
    "t1": "Trouvez ce qui se reconstruit,",
@@ -802,6 +1051,44 @@ window.MOLT_I18N = {
   },
   "footer": {
    "line": "Licence MIT. moltdisk audite ; il ne supprime pas."
+  },
+  "cmp": {
+   "title": "D'autres agissent sur un nom. Ici, on agit sur des preuves.",
+   "lede": "La différence n'est pas la vitesse, mais ce qu'il te reste après.",
+   "th1": "Approche",
+   "th2": "Sur quoi il juge",
+   "th3": "Ce que tu assumes après",
+   "r1b": "Le chemin dont tu te souviens",
+   "r1c": "L'oublié reste ; le mal mémorisé emporte les sources",
+   "r2n": "Un balayeur qui reconnaît les noms",
+   "r2b": "Le nom seul",
+   "r2c": "Un dossier de sources nommé target compte aussi",
+   "r3b": "Nom, marqueur voisin, octets apparents",
+   "r3c": "Une liste motivée ; la décision reste la tienne"
+  },
+  "json": {
+   "title": "Branche-le sur jq, ou sur la CI",
+   "lede": "<code>--json</code> écrit le même verdict en champs : sans couleur, sans progression, utilisable dans un tube.",
+   "note": "C'est tout le schéma. Les tailles sont en octets, les dates en secondes Unix.",
+   "ci": "<code>--jobs</code> règle les threads de mesure ; <code>--no-color</code> s'active déjà quand la sortie est redirigée.",
+   "cmt1": "# seulement au-delà de 1 Go, par taille",
+   "cmt2": "# CI : échouer le pipeline au-delà du seuil"
+  },
+  "faq": {
+   "title": "Six questions que tu vas sûrement poser",
+   "lede": "Les réponses sont dans le code, pas dans la formulation.",
+   "q1": "Est-ce que ça supprime quelque chose chez moi ?",
+   "a1": "Non. La 0.1.0 n'a ni module delete ni remove_dir_all. <code>-y</code> est une erreur ferme, code de sortie 2.",
+   "q2": "Pourquoi dist/, build/, bin/ et venv/ ne sont pas inclus par défaut ?",
+   "a2": "Trop de modèles les utilisent pour les sources. Ajoute <code>-k all</code>, et le jugement redevient le tien.",
+   "q3": "Pourquoi ne pas suivre les liens symboliques ?",
+   "a3": "Pour qu'un lien ne sorte pas de la racine donnée et que les mêmes octets ne soient pas comptés deux fois.",
+   "q4": "Pourquoi l'écart avec du ?",
+   "a4": "moltdisk mesure les octets apparents des fichiers ; <code>du</code> mesure les blocs du disque.",
+   "q5": "Les node_modules imbriqués sont-ils comptés deux fois ?",
+   "a5": "Non. L'extérieur est ignoré, chaque octet n'est compté qu'une fois.",
+   "q6": "Y a-t-il un mode watch, un fichier de config, des logs ?",
+   "a6": "Pas encore. La 0.1.0 fait un audit unique ; les trois sont prévus, non publiés."
   }
  },
  "de": {
@@ -823,7 +1110,10 @@ window.MOLT_I18N = {
    "verdict": "Das Urteil",
    "rulebook": "Das Regelbuch",
    "limits": "Grenzen",
-   "install": "Installation"
+   "install": "Installation",
+   "compare": "Vergleich",
+   "json": "Maschinenlesbar",
+   "faq": "Fragen"
   },
   "hero": {
    "t1": "Finde, was sich neu bauen lässt,",
@@ -917,6 +1207,44 @@ window.MOLT_I18N = {
   },
   "footer": {
    "line": "MIT-Lizenz. moltdisk prüft; es löscht nicht."
+  },
+  "cmp": {
+   "title": "Andere handeln nach Namen. Hier zählt der Beleg.",
+   "lede": "Der Unterschied ist nicht das Tempo, sondern das, was du danach in der Hand hältst.",
+   "th1": "Ansatz",
+   "th2": "Woran es entscheidet",
+   "th3": "Was du danach trägst",
+   "r1b": "Der Pfad, an den du dich erinnerst",
+   "r1c": "Vergessenes bleibt liegen, falsch Erinnertes nimmt Quellcode mit",
+   "r2n": "Ein Scanner, der Namen trifft",
+   "r2b": "Nur der Name",
+   "r2c": "Ein Quellordner namens target zählt mit",
+   "r3b": "Name, Nachbarmarker, scheinbare Bytes",
+   "r3c": "Eine Liste mit Gründen; die Entscheidung bleibt deine"
+  },
+  "json": {
+   "title": "In jq leiten, oder in die CI",
+   "lede": "<code>--json</code> schreibt dasselbe Urteil als Felder: keine Farbe, kein Fortschritt, direkt für die Pipe.",
+   "note": "Mehr Schema gibt es nicht. Größen in Bytes, Zeiten als Unix-Sekunden.",
+   "ci": "<code>--jobs</code> setzt die Messthreads; <code>--no-color</code> greift schon, wenn die Ausgabe umgeleitet wird.",
+   "cmt1": "# nur was über 1 GB liegt, nach Größe",
+   "cmt2": "# CI: Pipeline über der Schwelle scheitern lassen"
+  },
+  "faq": {
+   "title": "Sechs Dinge, die du wahrscheinlich fragen willst",
+   "lede": "Die Antworten stehen im Code, nicht in der Formulierung.",
+   "q1": "Löscht es etwas von mir?",
+   "a1": "Nein. 0.1.0 hat kein delete-Modul und kein remove_dir_all. <code>-y</code> ist ein harter Fehler, Exit-Code 2.",
+   "q2": "Warum sind dist/, build/, bin/ und venv/ nicht standardmäßig dabei?",
+   "a2": "Zu viele Vorlagen nutzen diese Namen für Quellcode. Mit <code>-k all</code> nimmst du sie auf, dann urteilst du.",
+   "q3": "Warum werden Symlinks nicht verfolgt?",
+   "a3": "Damit ein Link nicht aus dem angegebenen Wurzelverzeichnis führt und dieselben Bytes nicht doppelt zählen.",
+   "q4": "Warum weicht das von du ab?",
+   "a4": "moltdisk zählt scheinbare Bytes in Dateien, <code>du</code> zählt Blöcke auf dem Datenträger.",
+   "q5": "Werden verschachtelte node_modules doppelt gezählt?",
+   "a5": "Nein. Das äußere wird übersprungen, jedes Byte zählt einmal.",
+   "q6": "Gibt es watch, eine Konfigurationsdatei, Logs?",
+   "a6": "Noch nicht. 0.1.0 macht einen einmaligen Audit; alle drei sind geplant, nichts davon veröffentlicht."
   }
  },
  "pt-BR": {
@@ -938,7 +1266,10 @@ window.MOLT_I18N = {
    "verdict": "O veredito",
    "rulebook": "O livro de regras",
    "limits": "Limites",
-   "install": "Instalação"
+   "install": "Instalação",
+   "compare": "Comparação",
+   "json": "Legível",
+   "faq": "Perguntas"
   },
   "hero": {
    "t1": "Encontre o que se reconstrói,",
@@ -1032,6 +1363,44 @@ window.MOLT_I18N = {
   },
   "footer": {
    "line": "Licença MIT. moltdisk audita; não apaga."
+  },
+  "cmp": {
+   "title": "Outras ferramentas agem pelo nome. Esta age pela evidência.",
+   "lede": "A diferença não é a velocidade, é com o que você fica depois.",
+   "th1": "Abordagem",
+   "th2": "Com o que decide",
+   "th3": "O que você assume depois",
+   "r1b": "O caminho que você lembra",
+   "r1c": "O esquecido fica; o lembrado errado leva o código junto",
+   "r2n": "Um scanner que casa nomes",
+   "r2b": "Só o nome",
+   "r2c": "Uma pasta de código chamada target também conta",
+   "r3b": "Nome, marcador vizinho, bytes aparentes",
+   "r3c": "Uma lista com motivos; a decisão continua sua"
+  },
+  "json": {
+   "title": "Leve para o jq ou para a CI",
+   "lede": "<code>--json</code> escreve o mesmo veredicto em campos: sem cor, sem progresso, pronto para um pipe.",
+   "note": "O esquema é só isso. Tamanhos em bytes, horários em segundos Unix.",
+   "ci": "<code>--jobs</code> define as threads de medição; <code>--no-color</code> já entra sozinho quando a saída é redirecionada.",
+   "cmt1": "# só o que passa de 1 GB, por tamanho",
+   "cmt2": "# CI: falhe o pipeline acima do limite"
+  },
+  "faq": {
+   "title": "Seis coisas que você provavelmente vai perguntar",
+   "lede": "As respostas estão no código, não no texto.",
+   "q1": "Isso apaga algo meu?",
+   "a1": "Não. A 0.1.0 não tem módulo delete nem remove_dir_all. <code>-y</code> é erro duro, código de saída 2.",
+   "q2": "Por que dist/, build/, bin/ e venv/ não entram por padrão?",
+   "a2": "Porque muitos templates usam esses nomes para código. Inclua com <code>-k all</code> e o julgamento passa a ser seu.",
+   "q3": "Por que não seguir links simbólicos?",
+   "a3": "Para que um link não saia da raiz informada e os mesmos bytes não sejam contados duas vezes.",
+   "q4": "Por que não bate com o du?",
+   "a4": "moltdisk mede os bytes aparentes dos arquivos; <code>du</code> mede os blocos do disco.",
+   "q5": "node_modules aninhados contam duas vezes?",
+   "a5": "Não. O de fora é ignorado, cada byte conta uma vez.",
+   "q6": "Existe watch, arquivo de configuração, log?",
+   "a6": "Ainda não. A 0.1.0 faz uma auditoria única; os três estão planejados, nenhum publicado."
   }
  },
  "ru": {
@@ -1053,7 +1422,10 @@ window.MOLT_I18N = {
    "verdict": "Вердикт",
    "rulebook": "Свод правил",
    "limits": "Границы",
-   "install": "Установка"
+   "install": "Установка",
+   "compare": "Сравнение",
+   "json": "Машинный",
+   "faq": "Вопросы"
   },
   "hero": {
    "t1": "Находи то, что пересобирается,",
@@ -1147,6 +1519,44 @@ window.MOLT_I18N = {
   },
   "footer": {
    "line": "Лицензия MIT. moltdisk проверяет, но не удаляет."
+  },
+  "cmp": {
+   "title": "Другие действуют по имени. Здесь действуют по доказательству.",
+   "lede": "Разница не в скорости, а в том, что останется у вас после.",
+   "th1": "Подход",
+   "th2": "По чему решает",
+   "th3": "Чем вы платите потом",
+   "r1b": "Путь, который вы помните",
+   "r1c": "Забытое останется, а перепутанное унесёт исходники",
+   "r2n": "Сканер, который ловит имена",
+   "r2b": "Только имя",
+   "r2c": "Папка с исходниками по имени target тоже попадёт",
+   "r3b": "Имя, метка рядом, видимые байты",
+   "r3c": "Список с обоснованием; решение остаётся вашим"
+  },
+  "json": {
+   "title": "Отдайте в jq или в CI",
+   "lede": "<code>--json</code> пишет тот же вердикт полями: без цвета, без прогресса, готово для конвейера.",
+   "note": "Это вся схема. Размеры в байтах, время в секундах Unix.",
+   "ci": "<code>--jobs</code> задаёт число потоков замера; <code>--no-color</code> включается сам при перенаправлении вывода.",
+   "cmt1": "# только то, что больше 1 GB, по размеру",
+   "cmt2": "# CI: падать при превышении порога"
+  },
+  "faq": {
+   "title": "Шесть вопросов, которые вы, вероятно, зададите",
+   "lede": "Ответы в коде, а не в формулировках.",
+   "q1": "Оно что-нибудь у меня удалит?",
+   "a1": "Нет. В 0.1.0 нет модуля delete и нет remove_dir_all. <code>-y</code> — жёсткая ошибка, код выхода 2.",
+   "q2": "Почему dist/, build/, bin/ и venv/ не входят по умолчанию?",
+   "a2": "Слишком многие шаблоны используют эти имена для исходников. Включите <code>-k all</code> — и судить будете вы.",
+   "q3": "Почему не переходить по симлинкам?",
+   "a3": "Чтобы ссылка не вывела за указанный корень и те же байты не посчитались дважды.",
+   "q4": "Почему числа не совпадают с du?",
+   "a4": "moltdisk считает видимые байты файлов, <code>du</code> — блоки на диске.",
+   "q5": "Вложенные node_modules считаются дважды?",
+   "a5": "Нет. Внешний пропускается, каждый байт считается один раз.",
+   "q6": "Есть watch, файл конфигурации, логи?",
+   "a6": "Пока нет. 0.1.0 делает один аудит; все три в планах и не выпущены."
   }
  },
  "ar": {
@@ -1168,7 +1578,10 @@ window.MOLT_I18N = {
    "verdict": "الحكم",
    "rulebook": "كتاب القواعد",
    "limits": "الحدود",
-   "install": "التثبيت"
+   "install": "التثبيت",
+   "compare": "مقارنة",
+   "json": "آلي",
+   "faq": "أسئلة"
   },
   "hero": {
    "t1": "ابحث عمّا يُعاد بناؤه،",
@@ -1262,6 +1675,44 @@ window.MOLT_I18N = {
   },
   "footer": {
    "line": "رخصة MIT. يفحص moltdisk ولا يحذف."
+  },
+  "cmp": {
+   "title": "غيرها يعمل بالاسم. هذا يعمل بالدليل.",
+   "lede": "الفرق ليس في السرعة، بل في ما يبقى في يدك بعد ذلك.",
+   "th1": "الطريقة",
+   "th2": "علامَ يحكم",
+   "th3": "ما تتحمله لاحقًا",
+   "r1b": "المسار الذي تتذكره",
+   "r1c": "ما نسيته يبقى، وما أخطأت في تذكره يأخذ الشيفرة معه",
+   "r2n": "ماسح يطابق الأسماء",
+   "r2b": "الاسم وحده",
+   "r2c": "مجلد شيفرة باسم target يُحسب أيضًا",
+   "r3b": "الاسم + علامة مجاورة + بايتات ظاهرة",
+   "r3c": "قائمة بأسبابها، والقرار يبقى لك"
+  },
+  "json": {
+   "title": "أوصله إلى jq أو إلى CI",
+   "lede": "<code>--json</code> يكتب الحكم نفسه حقولًا: بلا لون وبلا تقدم، صالح للأنابيب.",
+   "note": "هذا هو المخطط كله. الأحجام بالبايت والأوقات بثواني يونكس.",
+   "ci": "<code>--jobs</code> يضبط خيوط القياس، و<code>--no-color</code> يعمل تلقائيًا عند إعادة توجيه الخرج.",
+   "cmt1": "# ما يتجاوز 1 غيغابايت فقط، بحسب الحجم",
+   "cmt2": "# CI: إفشال الخط عند تجاوز الحد"
+  },
+  "faq": {
+   "title": "ستة أسئلة ستطرحها على الأرجح",
+   "lede": "الأجوبة في الشيفرة، لا في الصياغة.",
+   "q1": "هل سيحذف شيئًا من ملفاتي؟",
+   "a1": "لا. الإصدار 0.1.0 لا يحوي وحدة delete ولا remove_dir_all. <code>-y</code> خطأ صريح ورمز الخروج 2.",
+   "q2": "لماذا لا تدخل dist/ وbuild/ وbin/ وvenv/ في المجموعة الافتراضية؟",
+   "a2": "لأن قوالب كثيرة تستخدم هذه الأسماء للشيفرة. أضفها بـ<code>-k all</code> وسيعود الحكم إليك.",
+   "q3": "لماذا لا يتبع الروابط الرمزية؟",
+   "a3": "كي لا يخرج رابط عن الجذر الذي أعطيته، وكيلا تُحسب البايتات نفسها مرتين.",
+   "q4": "لماذا تختلف الأرقام عن du؟",
+   "a4": "moltdisk يقيس البايتات الظاهرة في الملفات، و<code>du</code> يقيس كتل القرص.",
+   "q5": "هل تُحسب node_modules المتداخلة مرتين؟",
+   "a5": "لا. يُتجاوز الخارجي، فتُحسب كل بايت مرة واحدة.",
+   "q6": "هل يوجد watch أو ملف إعدادات أو سجلات؟",
+   "a6": "ليس بعد. 0.1.0 يجري تدقيقًا واحدًا؛ الثلاثة مخطط لها وغير منشورة."
   }
  },
  "tr": {
@@ -1283,7 +1734,10 @@ window.MOLT_I18N = {
    "verdict": "Karar",
    "rulebook": "Kural kitabı",
    "limits": "Sınırlar",
-   "install": "Kurulum"
+   "install": "Kurulum",
+   "compare": "Karşılaştırma",
+   "json": "Makine",
+   "faq": "Sorular"
   },
   "hero": {
    "t1": "Yeniden kurulabileni bul,",
@@ -1377,6 +1831,44 @@ window.MOLT_I18N = {
   },
   "footer": {
    "line": "MIT lisansı. moltdisk denetler; silmez."
+  },
+  "cmp": {
+   "title": "Başkaları ada göre davranır. Bu, kanıta göre.",
+   "lede": "Fark hızda değil, sonrasında elinde ne kaldığında.",
+   "th1": "Yaklaşım",
+   "th2": "Neye göre karar verir",
+   "th3": "Sonra neyi taşırsın",
+   "r1b": "Hatırladığın yol",
+   "r1c": "Unuttuğun kalır, yanlış hatırladığın kaynağı da götürür",
+   "r2n": "Adları eşleyen tarayıcı",
+   "r2b": "Yalnızca ad",
+   "r2c": "target adlı bir kaynak klasörü de sayılır",
+   "r3b": "Ad + komşu işaret + görünen bayt",
+   "r3c": "Gerekçeli bir liste; karar sende kalır"
+  },
+  "json": {
+   "title": "jq'ya ya da CI'a bağla",
+   "lede": "<code>--json</code> aynı hükmü alan olarak yazar: renk yok, ilerleme yok, boru hattına hazır.",
+   "note": "Şema bundan ibaret. Boyutlar bayt, zamanlar Unix saniyesi.",
+   "ci": "<code>--jobs</code> ölçüm iş parçacıklarını belirler; <code>--no-color</code> çıktı yönlendirilince kendiliğinden devreye girer.",
+   "cmt1": "# yalnızca 1 GB üstü, boyuta göre",
+   "cmt2": "# CI: eşik aşılırsa iş akışını düşür"
+  },
+  "faq": {
+   "title": "Muhtemelen soracağın altı şey",
+   "lede": "Yanıtlar kodda, ifadede değil.",
+   "q1": "Bir şeyimi siler mi?",
+   "a1": "Hayır. 0.1.0'da delete modülü de remove_dir_all da yok. <code>-y</code> sert hatadır, çıkış kodu 2.",
+   "q2": "dist/, build/, bin/ ve venv/ neden varsayılan kümede değil?",
+   "a2": "Çok fazla şablon bu adları kaynak için kullanıyor. <code>-k all</code> ile ekle, o zaman hüküm senin olur.",
+   "q3": "Neden sembolik bağlantıları izlemez?",
+   "a3": "Bir bağlantı verdiğin kökün dışına çıkmasın ve aynı baytlar iki kez sayılmasın diye.",
+   "q4": "Neden du ile tutmuyor?",
+   "a4": "moltdisk dosyaların görünen baytlarını, <code>du</code> diskteki blokları ölçer.",
+   "q5": "İç içe node_modules iki kez sayılır mı?",
+   "a5": "Hayır. Dıştaki atlanır, her bayt bir kez sayılır.",
+   "q6": "watch, yapılandırma dosyası, günlük var mı?",
+   "a6": "Henüz yok. 0.1.0 tek seferlik denetim yapar; üçü de planda, hiçbiri yayımlanmadı."
   }
  }
 };
