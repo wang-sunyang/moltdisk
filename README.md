@@ -9,6 +9,10 @@
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![MSRV](https://img.shields.io/badge/MSRV-1.80-orange.svg)](Cargo.toml)
 
+<p align="center">
+  <a href="https://yangyang2857-rgb.github.io/moltdisk/"><b>官网 / website</b></a> &nbsp;—&nbsp; 12 种语言、深浅主题、无需登录
+</p>
+
 **蜕冗** — 蜕去冗余。Shed your dev bulk by finding it, not by deleting it.
 
 `moltdisk` 只做一件事：告诉你哪些构建产物是可以从源码重建的，以及凭什么这么判断。它不删任何东西。
@@ -191,6 +195,20 @@ moltdisk --json ~/code | jq '.targets[] | select(.size > 1e9) | .path'
   disagree; `du` is measuring something else.
 - A monorepo with a single lockfile at the root still gets one verdict per
   workspace, because each `node_modules` is measured separately.
+
+## 官网
+
+在线版本：**https://yangyang2857-rgb.github.io/moltdisk/**
+
+静态单页，没有构建步骤，也没有第三方依赖。和 README 相比它多了几处适合在浏览器里读的东西：
+
+- 五段正文（为什么只审计、一次判定的过程、规则表、边界、安装）之外，另有三个补充板块：三种做法对照、`--json` 字段说明、常见问题
+- 12 种语言：简体中文、繁體中文、English、日本語、한국어、Español、Français、Deutsch、Português (BR)、Русский、العربية（RTL）、Türkçe
+- 深浅两套主题，选择与语言都记在浏览器本地；脚本未执行时正文仍是完整可读的
+- 图标齐全：`favicon.svg`、`favicon.ico`（16 / 32 / 48）、`apple-touch-icon.png`（180）、`icon-192.png`、`icon-512.png`、`site.webmanifest`
+
+站点源文件在 [`docs/`](docs/)，由 GitHub Pages 从 `main` 的 `/docs` 目录托管；
+`docs/404.html` 与首页共用同一套主题和语言逻辑，深链走错时不会掉回默认样式。
 
 ## History
 
