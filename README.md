@@ -205,7 +205,7 @@ moltdisk --json ~/code | jq '.targets[] | select(.size > 1e9) | .path'
 - 五段正文（为什么只审计、一次判定的过程、规则表、边界、安装）之外，另有三个补充板块：三种做法对照、`--json` 字段说明、常见问题
 - 12 种语言：简体中文、繁體中文、English、日本語、한국어、Español、Français、Deutsch、Português (BR)、Русский、العربية（RTL）、Türkçe
 - 深浅两套主题，选择与语言都记在浏览器本地；脚本未执行时正文仍是完整可读的
-- 图标齐全：`favicon.svg`、`favicon.ico`（16 / 32 / 48）、`apple-touch-icon.png`（180）、`icon-192.png`、`icon-512.png`、`site.webmanifest`
+- 图标齐全，都在 `docs/assets/` 里：`favicon.svg`、`favicon.ico`（16 / 32 / 48）、`apple-touch-icon.png`（180）、`icon-192.png`、`icon-512.png`、`site.webmanifest`
 
 站点源文件在 [`docs/`](docs/)，由 GitHub Pages 从 `main` 的 `/docs` 目录托管；
 `docs/404.html` 与首页共用同一套主题和语言逻辑，深链走错时不会掉回默认样式。
