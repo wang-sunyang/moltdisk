@@ -39,7 +39,7 @@ Then answer these questions in the pull request:
 
 A false positive is the only kind of bug that matters here: a report gets
 copy-pasted into `rm`, so a wrong verdict is not a cosmetic defect. Use the
-[false-positive form](https://github.com/yangyang2857-rgb/moltdisk/issues/new?template=false-positive.yml),
+[false-positive form](https://github.com/wang-sunyang/moltdisk/issues/new?template=false-positive.yml),
 which asks for the three things such a report needs — the path that was matched,
 the sibling files in its parent directory, and what `moltdisk why <path>` printed.
 The form is the contract; if a field in it turns out to be useless for triage,

@@ -56,4 +56,4 @@ the first public version ships without it by construction.
   `--yes` / `--dry-run`. `clean` still parses, then refuses with exit code 2 and
   an explanation; `-y` is a hard error. The binary depends only on `rayon`.
 
-[0.1.0]: https://github.com/yangyang2857-rgb/moltdisk/releases/tag/v0.1.0
+[0.1.0]: https://github.com/wang-sunyang/moltdisk/releases/tag/v0.1.0

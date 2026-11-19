@@ -4,13 +4,13 @@
   <img src="assets/banner.png" width="880" alt="moltdisk · 蜕冗" />
 </p>
 
-[![CI](https://github.com/yangyang2857-rgb/moltdisk/actions/workflows/ci.yml/badge.svg)](https://github.com/yangyang2857-rgb/moltdisk/actions/workflows/ci.yml)
-[![release](https://img.shields.io/github/v/release/yangyang2857-rgb/moltdisk?sort=semver)](https://github.com/yangyang2857-rgb/moltdisk/releases)
+[![CI](https://github.com/wang-sunyang/moltdisk/actions/workflows/ci.yml/badge.svg)](https://github.com/wang-sunyang/moltdisk/actions/workflows/ci.yml)
+[![release](https://img.shields.io/github/v/release/wang-sunyang/moltdisk?sort=semver)](https://github.com/wang-sunyang/moltdisk/releases)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![MSRV](https://img.shields.io/badge/MSRV-1.80-orange.svg)](Cargo.toml)
 
 <p align="center">
-  <a href="https://yangyang2857-rgb.github.io/moltdisk/"><b>官网 / website</b></a> &nbsp;—&nbsp; 12 种语言、深浅主题、无需登录
+  <a href="https://wang-sunyang.github.io/moltdisk/"><b>官网 / website</b></a> &nbsp;—&nbsp; 12 种语言、深浅主题、无需登录
 </p>
 
 **蜕冗** — 蜕去冗余。Shed your dev bulk by finding it, not by deleting it.
@@ -76,13 +76,13 @@ strings target/release/moltdisk | grep -c remove_dir_all   # 0
 
 ## Install
 
-Prebuilt binaries are attached to [each release](https://github.com/yangyang2857-rgb/moltdisk/releases):
+Prebuilt binaries are attached to [each release](https://github.com/wang-sunyang/moltdisk/releases):
 Linux x86_64 / aarch64 (static musl), macOS Intel / Apple Silicon, Windows x86_64.
 Each archive is paired with a `.sha256`.
 
 ```bash
 TAG=v0.1.0
-curl -LO https://github.com/yangyang2857-rgb/moltdisk/releases/download/$TAG/moltdisk-$TAG-x86_64-unknown-linux-musl.tar.gz
+curl -LO https://github.com/wang-sunyang/moltdisk/releases/download/$TAG/moltdisk-$TAG-x86_64-unknown-linux-musl.tar.gz
 sha256sum -c moltdisk-$TAG-x86_64-unknown-linux-musl.sha256
 tar xzf moltdisk-$TAG-x86_64-unknown-linux-musl.tar.gz
 ```
@@ -90,7 +90,7 @@ tar xzf moltdisk-$TAG-x86_64-unknown-linux-musl.tar.gz
 Or from source:
 
 ```bash
-cargo install --git https://github.com/yangyang2857-rgb/moltdisk
+cargo install --git https://github.com/wang-sunyang/moltdisk
 ```
 
 MSRV is 1.80. One dependency (`rayon`), no `unsafe`.
@@ -198,7 +198,7 @@ moltdisk --json ~/code | jq '.targets[] | select(.size > 1e9) | .path'
 
 ## 官网
 
-在线版本：**https://yangyang2857-rgb.github.io/moltdisk/**
+在线版本：**https://wang-sunyang.github.io/moltdisk/**
 
 静态单页，没有构建步骤，也没有第三方依赖。和 README 相比它多了几处适合在浏览器里读的东西：
 

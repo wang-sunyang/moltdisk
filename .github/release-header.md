@@ -8,7 +8,7 @@
 > no delete path: no `remove_dir_all`, and `-y` is a hard error rather than a prompt.
 >
 > Verify it instead of trusting it: `strings moltdisk | grep -c remove_dir_all` prints `0`.
-> The long version: [Why an auditor and not a deleter](https://github.com/yangyang2857-rgb/moltdisk#why-an-auditor-and-not-a-deleter).
+> The long version: [Why an auditor and not a deleter](https://github.com/wang-sunyang/moltdisk#why-an-auditor-and-not-a-deleter).
 
 ---
 

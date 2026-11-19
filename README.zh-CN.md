@@ -2,8 +2,8 @@
 
 [English](README.md) · **简体中文**
 
-[![CI](https://github.com/yangyang2857-rgb/moltdisk/actions/workflows/ci.yml/badge.svg)](https://github.com/yangyang2857-rgb/moltdisk/actions/workflows/ci.yml)
-[![release](https://img.shields.io/github/v/release/yangyang2857-rgb/moltdisk?sort=semver)](https://github.com/yangyang2857-rgb/moltdisk/releases)
+[![CI](https://github.com/wang-sunyang/moltdisk/actions/workflows/ci.yml/badge.svg)](https://github.com/wang-sunyang/moltdisk/actions/workflows/ci.yml)
+[![release](https://img.shields.io/github/v/release/wang-sunyang/moltdisk?sort=semver)](https://github.com/wang-sunyang/moltdisk/releases)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![MSRV](https://img.shields.io/badge/MSRV-1.80-orange.svg)](Cargo.toml)
 
@@ -64,13 +64,13 @@ strings target/release/moltdisk | grep -c remove_dir_all   # 0
 
 ## 安装
 
-预编译二进制挂在[每个 release](https://github.com/yangyang2857-rgb/moltdisk/releases)上：
+预编译二进制挂在[每个 release](https://github.com/wang-sunyang/moltdisk/releases)上：
 Linux x86_64 / aarch64（静态 musl）、macOS Intel / Apple Silicon、Windows x86_64。
 每个压缩包都配一个 `.sha256`。
 
 ```bash
 TAG=v0.1.0
-curl -LO https://github.com/yangyang2857-rgb/moltdisk/releases/download/$TAG/moltdisk-$TAG-x86_64-unknown-linux-musl.tar.gz
+curl -LO https://github.com/wang-sunyang/moltdisk/releases/download/$TAG/moltdisk-$TAG-x86_64-unknown-linux-musl.tar.gz
 sha256sum -c moltdisk-$TAG-x86_64-unknown-linux-musl.sha256
 tar xzf moltdisk-$TAG-x86_64-unknown-linux-musl.tar.gz
 ```
@@ -78,7 +78,7 @@ tar xzf moltdisk-$TAG-x86_64-unknown-linux-musl.tar.gz
 或从源码安装：
 
 ```bash
-cargo install --git https://github.com/yangyang2857-rgb/moltdisk
+cargo install --git https://github.com/wang-sunyang/moltdisk
 ```
 
 MSRV 为 1.80。只有一个依赖（`rayon`），没有 `unsafe`。
