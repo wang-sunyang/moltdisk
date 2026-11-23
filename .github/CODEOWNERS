@@ -1,0 +1,22 @@
+# CODEOWNERS — every path resolves to the sole copyright holder.
+# Default: nothing merges without review from @wang-sunyang.
+
+*       @wang-sunyang
+
+# Core crate
+/src/             @wang-sunyang
+/tests/           @wang-sunyang
+/Cargo.toml       @wang-sunyang
+/Cargo.lock       @wang-sunyang
+
+# Assets and brand artwork
+/assets/          @wang-sunyang
+
+# Governance
+/GOVERNANCE.md    @wang-sunyang
+/CONTRIBUTING.md  @wang-sunyang
+/LICENSE          @wang-sunyang
+/AUTHORS.md       @wang-sunyang
+/TRADEMARK.md     @wang-sunyang
+/docs/            @wang-sunyang
+/.github/         @wang-sunyang
