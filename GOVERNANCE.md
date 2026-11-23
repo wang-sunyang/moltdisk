@@ -77,8 +77,8 @@ treating any row as settled.
 |---|---|---|
 | A | **Partly met** | One tagged release, `v0.1.0`, published 2026-11-13 — ten days ago. |
 | B | **Not met** | No issues and no pull requests in the repository's history at all. Nothing external has entered the loop, so nothing external has completed it. |
-| C | **Not met** | Met. `GOVERNANCE.md`, `TRADEMARK.md`, `AUTHORS.md` and `.github/CODEOWNERS` are all on disk; `main` rejects force-pushes and deletion, admins included. |
-| D | **Partly met** | Met. `LICENSE` (MIT) and `AUTHORS.md` both name Wang Sunyang personally; `TRADEMARK.md` states the marks belong to the individual and are used by the organization under permission only. |
+| C | **Met** | `GOVERNANCE.md`, `TRADEMARK.md`, `AUTHORS.md` and `.github/CODEOWNERS` all exist and are current; `main` rejects force-pushes and deletion, admins included. |
+| D | **Met** | `LICENSE` (MIT) and `AUTHORS.md` name Wang Sunyang personally; `TRADEMARK.md` states the marks belong to the individual and are used by the organization under permission only. |
 
 ---
 
